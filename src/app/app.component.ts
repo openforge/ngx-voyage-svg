@@ -50,6 +50,11 @@ import { linearInterpolation } from './shared/utils';
                 </svg:circle>
               </ng-container>
             </ng-container>
+
+            <svg:g voyageVoyager transform="translate(-9, -60)">
+              <svg:image xlink:href="http://randomuser.me/api/portraits/men/1.jpg" height="37px" width="37px">
+              </svg:image>
+            </svg:g>
           </svg:g>
         </svg:svg>
       </voyage-viewport>
