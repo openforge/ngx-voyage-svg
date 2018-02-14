@@ -1,6 +1,7 @@
 import {
   Component,
   ChangeDetectionStrategy,
+  OnChanges,
   OnInit,
   AfterContentInit,
   OnDestroy,
@@ -10,6 +11,7 @@ import {
   HostListener,
   NgZone,
   Input,
+  SimpleChanges,
 } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 import { take, takeUntil } from 'rxjs/operators';
@@ -42,7 +44,7 @@ export interface HammerInput {
   styles: [`div:first-of-type { height: 100%; width: 100% }`],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class VoyageViewportComponent implements OnInit, AfterContentInit, OnDestroy {
+export class VoyageViewportComponent implements OnChanges, OnInit, AfterContentInit, OnDestroy {
   @ContentChild(VoyageWrapperDirective)
   private wrapperDirective: VoyageWrapperDirective;
 
@@ -76,6 +78,14 @@ export class VoyageViewportComponent implements OnInit, AfterContentInit, OnDest
     private voyageNavigationService: VoyageNavigationService,
     private voyagePathService: VoyagePathService
   ) {}
+
+  public ngOnChanges(changes: SimpleChanges) {
+    const { currentProgress: progressChange } = changes;
+
+    if (progressChange && !progressChange.firstChange) {
+      this.definePaths();
+    }
+  }
 
   public ngOnInit() {
     this.backgroundDirective.clientRect$.pipe(take(1)).subscribe(clientRect => {
