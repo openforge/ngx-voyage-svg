@@ -7,8 +7,15 @@ import { linearInterpolation } from './shared/utils';
 @Component({
   selector: 'voyage-root',
   template: `
-    <ng-container *ngIf="voyageData$ | async as data">
-      <voyage-viewport [currentProgress]="data.currentPoints">
+    <button (click)="toggled = !toggled">Toggle</button>
+    <button (click)="increment(10)">Increment 10</button>
+    <button (click)="increment(20)">Increment 20</button>
+    <button (click)="increment(30)">Increment 30</button>
+    <button (click)="clear()">Clear Data</button>
+    <button (click)="setData()">Set Data</button>
+
+    <ng-container *ngIf="data">
+      <voyage-viewport [currentProgress]="data.currentPoints" *ngIf="toggled">
         <svg:svg width="100%" height="100%">
           <svg:g voyageWrapper>
             <svg:image voyageBackground [attr.xlink:href]="image">
@@ -66,6 +73,10 @@ export class AppComponent implements OnInit {
   image = '/assets/usa-map.jpg';
   voyageData$: any;
 
+  toggled = true;
+  data: any;
+  lastData: any;
+
   constructor(private httpClient: HttpClient) {}
 
   ngOnInit() {
@@ -73,54 +84,39 @@ export class AppComponent implements OnInit {
     const twoData$ = this.httpClient.get('/assets/test-data-1.json');
 
     this.voyageData$ = oneData$
-    .pipe(
-      // merge(twoData$.pipe(delay(1000))),
-      // merge(oneData$.pipe(delay(2000))),
-      // merge(twoData$.pipe(delay(3000))),
-      // merge(oneData$.pipe(delay(4000))),
-      // merge(twoData$.pipe(delay(5000))),
-      // merge(oneData$.pipe(delay(6000))),
-      // merge(twoData$.pipe(delay(7000))),
-      // merge(oneData$.pipe(delay(8000))),
-      // merge(twoData$.pipe(delay(9000))),
-      // merge(oneData$.pipe(delay(10000))),
-      map((data: any) => {
-        data.stops = data.stops.map((stop, stopIdx) => {
-          const next = data.stops[stopIdx + 1];
-          let increment = 0;
-          if (next) {
-            increment = (next.pointsRequired - stop.pointsRequired) / (stop.subStops.length + 1);
-          }
+      .pipe(
+        // merge(twoData$.pipe(delay(1000))),
+        // merge(oneData$.pipe(delay(2000))),
+        // merge(twoData$.pipe(delay(3000))),
+        // merge(oneData$.pipe(delay(4000))),
+        // merge(twoData$.pipe(delay(5000))),
+        // merge(oneData$.pipe(delay(6000))),
+        // merge(twoData$.pipe(delay(7000))),
+        // merge(oneData$.pipe(delay(8000))),
+        // merge(twoData$.pipe(delay(9000))),
+        // merge(oneData$.pipe(delay(10000))),
+        map(demoDataMapping),
+        tap(data => console.log(data))
+      )
+      .subscribe(data => (this.data = data));
+  }
 
-          return {
-            ...stop,
-            x: usaMapStops[stopIdx].x,
-            y: usaMapStops[stopIdx].y,
-            subStops: stop.subStops.map((subStop, subStopIdx) => {
-              const pt = linearInterpolation(
-                {x: usaMapStops[stopIdx].x, y: usaMapStops[stopIdx].y},
-                {x: usaMapStops[stopIdx + 1].x, y: usaMapStops[stopIdx + 1].y},
-                (subStopIdx + 1) / (stop.subStops.length + 1)
-              );
+  clear() {
+    if (this.data.currentPoints) {
+      this.lastData = this.data;
+      this.data = {};
+    }
+  }
 
-              let pointsRequired = 0;
-              if (next) {
-                pointsRequired = stop.pointsRequired + (increment * (subStopIdx + 1));
-              }
+  setData() {
+    if (!this.data.currentPoints) {
+      this.data = this.lastData;
+      this.lastData = {};
+    }
+  }
 
-              return {
-                ...subStop,
-                x: pt.x,
-                y: pt.y,
-                pointsRequired,
-              };
-            })
-          };
-        });
-        return data;
-      }),
-      tap((data) => console.log(data))
-    );
+  increment(num) {
+    this.data.currentPoints += num;
   }
 
   handleStopClick(...args) {
@@ -148,3 +144,42 @@ const usaMapStops = [
   { x: 165, y: 139 }, // 13
 ];
 
+function demoDataMapping(data) {
+  data.stops = data.stops.map((stop, stopIdx) => {
+    const next = data.stops[stopIdx + 1];
+    let increment = 0;
+
+    if (next) {
+      increment =
+        (next.pointsRequired - stop.pointsRequired) /
+        (stop.subStops.length + 1);
+    }
+
+    return {
+      ...stop,
+      x: usaMapStops[stopIdx].x,
+      y: usaMapStops[stopIdx].y,
+      subStops: stop.subStops.map((subStop, subStopIdx) => {
+        const pt = linearInterpolation(
+          { x: usaMapStops[stopIdx].x, y: usaMapStops[stopIdx].y },
+          { x: usaMapStops[stopIdx + 1].x, y: usaMapStops[stopIdx + 1].y },
+          (subStopIdx + 1) / (stop.subStops.length + 1)
+        );
+
+        let pointsRequired = 0;
+        if (next) {
+          pointsRequired = stop.pointsRequired + increment * (subStopIdx + 1);
+        }
+
+        return {
+          ...subStop,
+          x: pt.x,
+          y: pt.y,
+          pointsRequired,
+        };
+      })
+    };
+  });
+
+  return data;
+}
