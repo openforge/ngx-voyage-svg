@@ -8,11 +8,11 @@ import { VoyageActivePathDirective } from './../directives/voyage-active-path.di
 
 @Injectable()
 export class VoyagePathService {
-  private currentPoint = new Subject<SVGPoint>();
-  public currentPoint$ = this.currentPoint.asObservable();
+  private currentPosition = new Subject<{point: SVGPoint, lengthAtPoint: number}>();
+  public currentPosition$ = this.currentPosition.asObservable();
+  public strokeLength = 0;
 
   private totalLength: number;
-  private strokeLength = 0;
   private animationHandle: number;
 
   constructor() {}
@@ -20,8 +20,7 @@ export class VoyagePathService {
   public animateLength(activePath: VoyageActivePathDirective, destinations: VoyageDestinationDirective[]) {
     this.totalLength = activePath.el.getTotalLength();
 
-    this.toggleReachedDestinations(destinations);
-
+    this.stopAnimation();
     this.animationHandle = requestAnimationFrame(() => this.animate(activePath, destinations));
   }
 
@@ -39,20 +38,12 @@ export class VoyagePathService {
     activePath.setStrokeDasharray(`${this.strokeLength} ${this.totalLength}`);
 
     const center = activePath.el.getPointAtLength(this.strokeLength);
-    this.currentPoint.next(center);
-
-    this.toggleReachedDestinations(destinations);
+    this.currentPosition.next({ point: center, lengthAtPoint: this.strokeLength });
 
     if (this.strokeLength === this.totalLength) {
       return;
     }
 
     this.animationHandle = requestAnimationFrame(() => this.animate(activePath, destinations));
-  }
-
-  private toggleReachedDestinations(destinations: VoyageDestinationDirective[]) {
-    destinations
-      .filter(destination => destination.pathLengthAtPoint <= this.strokeLength && !destination.isReached)
-      .forEach(destination => (destination.isReached = true));
   }
 }

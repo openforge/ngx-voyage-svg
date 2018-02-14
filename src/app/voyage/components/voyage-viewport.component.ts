@@ -89,10 +89,11 @@ export class VoyageViewportComponent implements OnInit, AfterContentInit, OnDest
       .pipe(takeUntil(this.destroy$))
       .subscribe(destinations => this.definePaths());
 
-     this.voyagePathService.currentPoint$
+    this.voyagePathService.currentPosition$
       .pipe(takeUntil(this.destroy$))
-      .subscribe(currentPoint => {
-        const { x, y } = currentPoint;
+      .subscribe(currentPosition => {
+        const { x, y } = currentPosition.point;
+
         this.voyageNavigationService.centerTo(x, y);
         this.voyager.setPosition(x, y);
       });
