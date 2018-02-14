@@ -17,15 +17,15 @@ export class VoyageTravelPathDirective {
   public setPathDefinition(destinations: VoyageDestinationDirective[]) {
     const definition = destinations.reduce((pathDef, destination, destinationIdx) => {
       if (destinationIdx === 0) {
-        return `M ${destination.point.x} ${destination.point.y} `;
+        pathDef = `M ${destination.point.x} ${destination.point.y} `;
+      } else {
+        pathDef += `L ${destination.point.x} ${destination.point.y} `;
       }
-
-      const next = pathDef + `L ${destination.point.x} ${destination.point.y} `;
 
       this.renderer.setAttribute(this.el, 'd', pathDef);
       destination.pathLengthAtPoint = this.el.getTotalLength();
 
-      return next;
+      return pathDef;
     }, '');
     this.renderer.setAttribute(this.el, 'd', definition);
   }
