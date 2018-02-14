@@ -13,13 +13,13 @@ import 'hammerjs';
   declarations: [
     VoyageViewportComponent,
     VoyageWrapperDirective,
-    VoyageBackgroundDirective
+    VoyageBackgroundDirective,
   ],
   exports: [
     VoyageViewportComponent,
     VoyageWrapperDirective,
-    VoyageBackgroundDirective
+    VoyageBackgroundDirective,
   ],
   providers: [VoyageNavigationService]
 })
-export class VoyageNavigationModule {}
+export class VoyageModule {}

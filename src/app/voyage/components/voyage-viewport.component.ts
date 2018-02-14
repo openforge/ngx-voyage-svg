@@ -30,7 +30,7 @@ export interface HammerInput {
   styles: [`div:first-of-type { height: 100%; width: 100% }`],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class VoyageViewportComponent implements OnInit {
+  export class VoyageViewportComponent implements OnInit {
   @ContentChild(VoyageWrapperDirective)
   private wrapperDirective: VoyageWrapperDirective;
 

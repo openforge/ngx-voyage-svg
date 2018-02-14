@@ -1,1 +1,1 @@
-export * from './app/voyage-navigation/voyage-navigation.module';
+export * from './app/voyage/voyage.module';
