@@ -7,6 +7,7 @@ import { VoyageBackgroundDirective } from './directives/voyage-background.direct
 import { VoyageNavigationService } from './services/voyage-navigation.service';
 import { VoyageDestinationDirective } from './directives/voyage-destination.directive';
 import { VoyageTravelPathDirective } from './directives/voyage-travel-path.directive';
+import { VoyageActivePathDirective } from './directives/voyage-active-path.directive';
 
 import 'hammerjs';
 
@@ -18,6 +19,7 @@ import 'hammerjs';
     VoyageBackgroundDirective,
     VoyageDestinationDirective,
     VoyageTravelPathDirective,
+    VoyageActivePathDirective,
   ],
   exports: [
     VoyageViewportComponent,
@@ -25,6 +27,7 @@ import 'hammerjs';
     VoyageBackgroundDirective,
     VoyageDestinationDirective,
     VoyageTravelPathDirective,
+    VoyageActivePathDirective,
   ],
   providers: [VoyageNavigationService]
 })
