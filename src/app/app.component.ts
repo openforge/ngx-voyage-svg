@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, tap, merge, delay } from 'rxjs/operators';
 
+import { linearInterpolation } from './shared/utils';
+
 @Component({
   selector: 'voyage-root',
   template: `
@@ -86,17 +88,6 @@ export class AppComponent implements OnInit {
   handleSubStopClick(...args) {
     console.log('substop clicked', args);
   }
-}
-
-function linearInterpolation(p1: {x: number; y: number}, p2: {x: number; y: number}, k: number): {x: number; y: number} {
-  if (k < 0 || k > 1) {
-    throw new Error('Linear Interpolation formula expects a percentage');
-  }
-
-  return {
-    x: (1 - k) * p1.x + k * p2.x,
-    y: (1 - k) * p1.y + k * p2.y,
-  };
 }
 
 const usaMapStops = [
