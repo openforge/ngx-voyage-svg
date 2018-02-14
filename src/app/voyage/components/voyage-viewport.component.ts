@@ -2,15 +2,25 @@ import {
   Component,
   ChangeDetectionStrategy,
   OnInit,
+  AfterContentInit,
+  OnDestroy,
   ContentChild,
+  ContentChildren,
+  QueryList,
   HostListener,
-  NgZone
+  NgZone,
+  Input,
 } from '@angular/core';
+import { Subscription } from 'rxjs/Subscription';
 import { take } from 'rxjs/operators';
 
 import { VoyageWrapperDirective } from './../directives/voyage-wrapper.directive';
 import { VoyageBackgroundDirective } from './../directives/voyage-background.directive';
 import { VoyageNavigationService } from './../services/voyage-navigation.service';
+import { VoyageDestinationDirective } from './../directives/voyage-destination.directive';
+import { VoyageTravelPathDirective } from './../directives/voyage-travel-path.directive';
+import { VoyageActivePathDirective } from '../directives/voyage-active-path.directive';
+import { linearInterpolation } from './../../shared/utils';
 
 export interface HammerInput {
   deltaX: number;
@@ -30,13 +40,25 @@ export interface HammerInput {
   styles: [`div:first-of-type { height: 100%; width: 100% }`],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-  export class VoyageViewportComponent implements OnInit {
+export class VoyageViewportComponent implements OnInit, AfterContentInit, OnDestroy {
   @ContentChild(VoyageWrapperDirective)
   private wrapperDirective: VoyageWrapperDirective;
 
   @ContentChild(VoyageBackgroundDirective)
   private backgroundDirective: VoyageBackgroundDirective;
 
+  @ContentChildren(VoyageDestinationDirective, { descendants: true })
+  private destinations: QueryList<VoyageDestinationDirective>;
+
+  @ContentChild(VoyageTravelPathDirective)
+  private travelPath: VoyageTravelPathDirective;
+
+  @ContentChild(VoyageActivePathDirective)
+  private activePath: VoyageActivePathDirective;
+
+  @Input() private currentProgress: number;
+
+  private destinationChanges: Subscription;
   private lastDeltaX = 0;
   private lastDeltaY = 0;
   private lastScale = 1;
@@ -52,6 +74,24 @@ export interface HammerInput {
     this.backgroundDirective.clientRect$.pipe(take(1)).subscribe(clientRect => {
       this.voyageNavigationService.init(this.wrapperDirective.el, clientRect);
     });
+  }
+
+  public ngAfterContentInit() {
+    this.destinationChanges = this.destinations.changes
+      .subscribe(destinations => this.definePaths());
+
+    this.definePaths();
+  }
+
+  public ngOnDestroy() {
+    this.destinationChanges.unsubscribe();
+  }
+
+  public definePaths() {
+    const destinations = this.destinations.toArray();
+
+    this.travelPath.setPathDefinition(destinations);
+    this.activePath.setPathDefinition(destinations, this.currentProgress);
   }
 
   @HostListener('panstart', ['$event'])
