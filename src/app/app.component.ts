@@ -33,7 +33,9 @@ import { linearInterpolation } from './shared/utils';
                 [requiredProgress]="stop.pointsRequired"
                 [attr.cx]="stop.x"
                 [attr.cy]="stop.y" r="12.5"
-                (click)="handleStopClick(stop)">
+                (click)="handleStopClick(stop)"
+                [attr.fill]="stopInstance.isReached ? '#009BDE' : '#FFFFFF'"
+                #stopInstance="voyageDestination">
               </svg:circle>
 
               <ng-container *ngFor="let subStop of stop.subStops">
