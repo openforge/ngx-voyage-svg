@@ -14,9 +14,10 @@ import {
 import { Subscription } from 'rxjs/Subscription';
 import { take } from 'rxjs/operators';
 
+import { VoyageNavigationService } from './../services/voyage-navigation.service';
+import { VoyagePathService } from './../services/voyage-path.service';
 import { VoyageWrapperDirective } from './../directives/voyage-wrapper.directive';
 import { VoyageBackgroundDirective } from './../directives/voyage-background.directive';
-import { VoyageNavigationService } from './../services/voyage-navigation.service';
 import { VoyageDestinationDirective } from './../directives/voyage-destination.directive';
 import { VoyageTravelPathDirective } from './../directives/voyage-travel-path.directive';
 import { VoyageActivePathDirective } from '../directives/voyage-active-path.directive';
@@ -67,20 +68,20 @@ export class VoyageViewportComponent implements OnInit, AfterContentInit, OnDest
 
   constructor(
     private zone: NgZone,
-    private voyageNavigationService: VoyageNavigationService
+    private voyageNavigationService: VoyageNavigationService,
+    private voyagePathService: VoyagePathService
   ) {}
 
   public ngOnInit() {
     this.backgroundDirective.clientRect$.pipe(take(1)).subscribe(clientRect => {
       this.voyageNavigationService.init(this.wrapperDirective.el, clientRect);
+      this.definePaths();
     });
   }
 
   public ngAfterContentInit() {
     this.destinationChanges = this.destinations.changes
       .subscribe(destinations => this.definePaths());
-
-    this.definePaths();
   }
 
   public ngOnDestroy() {
@@ -92,6 +93,7 @@ export class VoyageViewportComponent implements OnInit, AfterContentInit, OnDest
 
     this.travelPath.setPathDefinition(destinations);
     this.activePath.setPathDefinition(destinations, this.currentProgress);
+    this.voyagePathService.animateLength(this.activePath, destinations);
   }
 
   @HostListener('panstart', ['$event'])

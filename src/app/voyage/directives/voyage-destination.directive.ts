@@ -1,7 +1,8 @@
 import { Directive, Input, ElementRef } from '@angular/core';
 
 @Directive({
-  selector: '[voyageDestination]'
+  selector: '[voyageDestination]',
+  exportAs: 'voyageDestination',
 })
 export class VoyageDestinationDirective {
   @Input() public point: {x: number, y: number};
@@ -12,6 +13,7 @@ export class VoyageDestinationDirective {
   }
 
   public pathLengthAtPoint = 0;
+  public isReached = false;
 
   constructor(
     private elRef: ElementRef,

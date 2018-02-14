@@ -15,7 +15,7 @@ export class VoyageActivePathDirective {
     private renderer: Renderer2
   ) {}
 
-  setPathDefinition(destinations: VoyageDestinationDirective[], currentProgress: number) {
+  public setPathDefinition(destinations: VoyageDestinationDirective[], currentProgress: number) {
     const reachedDestinations = destinations.filter(dest => dest.requiredProgress <= currentProgress);
 
     let definition = reachedDestinations.reduce((pathDef, destination, destinationIdx) => {
@@ -29,6 +29,10 @@ export class VoyageActivePathDirective {
     definition += this.getPartialProgressPoint(destinations, currentProgress);
 
     this.renderer.setAttribute(this.el, 'd', definition);
+  }
+
+  public setStrokeDasharray(val: string) {
+    this.renderer.setStyle(this.el, 'stroke-dasharray', val);
   }
 
   private getPartialProgressPoint(destinations: VoyageDestinationDirective[], currentProgress: number) {
