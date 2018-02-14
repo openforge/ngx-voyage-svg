@@ -22,6 +22,7 @@ import { VoyageDestinationDirective } from './../directives/voyage-destination.d
 import { VoyageTravelPathDirective } from './../directives/voyage-travel-path.directive';
 import { VoyageActivePathDirective } from '../directives/voyage-active-path.directive';
 import { linearInterpolation } from './../../shared/utils';
+import { VoyageVoyagerDirective } from '../directives/voyage-voyager.directive';
 
 export interface HammerInput {
   deltaX: number;
@@ -57,6 +58,9 @@ export class VoyageViewportComponent implements OnInit, AfterContentInit, OnDest
   @ContentChild(VoyageActivePathDirective)
   private activePath: VoyageActivePathDirective;
 
+  @ContentChild(VoyageVoyagerDirective)
+  private voyager: VoyageVoyagerDirective;
+
   @Input() private currentProgress: number;
 
   private destroy = new Subject<never>();
@@ -90,6 +94,7 @@ export class VoyageViewportComponent implements OnInit, AfterContentInit, OnDest
       .subscribe(currentPoint => {
         const { x, y } = currentPoint;
         this.voyageNavigationService.centerTo(x, y);
+        this.voyager.setPosition(x, y);
       });
   }
 
