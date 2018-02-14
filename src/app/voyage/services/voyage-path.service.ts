@@ -47,7 +47,7 @@ export class VoyagePathService {
       return;
     }
 
-    requestAnimationFrame(() => this.animate(activePath, destinations));
+    this.animationHandle = requestAnimationFrame(() => this.animate(activePath, destinations));
   }
 
   private toggleReachedDestinations(destinations: VoyageDestinationDirective[]) {

@@ -99,6 +99,7 @@ export class VoyageViewportComponent implements OnInit, AfterContentInit, OnDest
   }
 
   public ngOnDestroy() {
+    this.voyagePathService.stopAnimation();
     this.destroy.next();
   }
 
