@@ -1,4 +1,4 @@
-import { Directive, AfterViewInit, ElementRef } from '@angular/core';
+import { Directive, AfterViewInit, ElementRef, Renderer2 } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 import { Observable } from 'rxjs/Observable';
 
@@ -12,9 +12,16 @@ export class VoyageBackgroundDirective implements AfterViewInit {
     return this.clientRect.asObservable();
   }
 
+  public get el(): SVGImageElement {
+    return this.elRef.nativeElement;
+  }
+
   private clientRect: Subject<ClientRect> = new Subject();
 
-  constructor(private elRef: ElementRef) {}
+  constructor(
+    private elRef: ElementRef,
+    private renderer: Renderer2
+  ) {}
 
   public ngAfterViewInit() {
     // Hack: because Safari doesn't fire load event
@@ -22,12 +29,15 @@ export class VoyageBackgroundDirective implements AfterViewInit {
     // Optimally, we'd decorate onLoad with @HostListener('load')
     // which works just fine on Chrome ¯\_(ツ)_/¯
     const img = new Image();
-    img.onload = this.onLoad.bind(this);
+    img.onload = this.onLoad.bind(this, img);
     img.src = this.elRef.nativeElement.getAttribute('xlink:href');
   }
 
-  // @HostListener('load')
-  private onLoad() {
-    this.clientRect.next(this.elRef.nativeElement.getBoundingClientRect());
+  private onLoad(img: HTMLImageElement) {
+    this.renderer.setAttribute(this.el, 'height', img.height.toString());
+    this.renderer.setAttribute(this.el, 'width', img.width.toString());
+
+    const clientRect: ClientRect = this.elRef.nativeElement.getBoundingClientRect();
+    this.clientRect.next(clientRect);
   }
 }
