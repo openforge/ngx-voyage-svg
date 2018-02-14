@@ -8,19 +8,42 @@ import { linearInterpolation } from './shared/utils';
   selector: 'voyage-root',
   template: `
     <ng-container *ngIf="voyageData$ | async as data">
-      <voyage-viewport>
+      <voyage-viewport [currentProgress]="data.currentPoints">
         <svg:svg width="100%" height="100%">
           <svg:g voyageWrapper>
             <svg:image voyageBackground [attr.xlink:href]="image">
             </svg:image>
 
+            <svg:path voyageTravelPath
+              stroke="#FFFFFF"
+              fill="none"
+              stroke-width="6"
+              opacity="0.5">
+            </svg:path>
+
+            <svg:path voyageActivePath
+              stroke="#009BDE"
+              fill="none"
+              stroke-width="6">
+            </svg:path>
+
             <ng-container *ngFor="let stop of data.stops">
-              <svg:circle voyageDestination [point]="{x: stop.x, y: stop.y}" [attr.cx]="stop.x" [attr.cy]="stop.y" r="12.5"
+              <svg:circle voyageDestination
+                [point]="{x: stop.x, y: stop.y}"
+                [requiredProgress]="stop.pointsRequired"
+                [attr.cx]="stop.x"
+                [attr.cy]="stop.y" r="12.5"
                 (click)="handleStopClick(stop)">
               </svg:circle>
 
               <ng-container *ngFor="let subStop of stop.subStops">
-                <svg:circle voyageDestination [point]="{x: subStop.x, y: subStop.y}" [attr.cx]="subStop.x" [attr.cy]="subStop.y" r="7" fill="#FFFFFF"
+                <svg:circle voyageDestination
+                  [point]="{x: subStop.x, y: subStop.y}"
+                  [requiredProgress]="subStop.pointsRequired"
+                  [attr.cx]="subStop.x"
+                  [attr.cy]="subStop.y"
+                  r="7"
+                  fill="#FFFFFF"
                   (click)="handleSubStopClick(stop, subStop)">
                 </svg:circle>
               </ng-container>
@@ -56,6 +79,12 @@ export class AppComponent implements OnInit {
       // merge(oneData$.pipe(delay(10000))),
       map((data: any) => {
         data.stops = data.stops.map((stop, stopIdx) => {
+          const next = data.stops[stopIdx + 1];
+          let increment = 0;
+          if (next) {
+            increment = (next.pointsRequired - stop.pointsRequired) / (stop.subStops.length + 1);
+          }
+
           return {
             ...stop,
             x: usaMapStops[stopIdx].x,
@@ -67,10 +96,16 @@ export class AppComponent implements OnInit {
                 (subStopIdx + 1) / (stop.subStops.length + 1)
               );
 
+              let pointsRequired = 0;
+              if (next) {
+                pointsRequired = stop.pointsRequired + (increment * (subStopIdx + 1));
+              }
+
               return {
                 ...subStop,
                 x: pt.x,
                 y: pt.y,
+                pointsRequired,
               };
             })
           };
