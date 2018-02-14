@@ -11,8 +11,8 @@ import {
   NgZone,
   Input,
 } from '@angular/core';
-import { Subscription } from 'rxjs/Subscription';
-import { take } from 'rxjs/operators';
+import { Subject } from 'rxjs/Subject';
+import { take, takeUntil } from 'rxjs/operators';
 
 import { VoyageNavigationService } from './../services/voyage-navigation.service';
 import { VoyagePathService } from './../services/voyage-path.service';
@@ -59,7 +59,8 @@ export class VoyageViewportComponent implements OnInit, AfterContentInit, OnDest
 
   @Input() private currentProgress: number;
 
-  private destinationChanges: Subscription;
+  private destroy = new Subject<never>();
+  private destroy$ = this.destroy.asObservable();
   private lastDeltaX = 0;
   private lastDeltaY = 0;
   private lastScale = 1;
@@ -80,12 +81,20 @@ export class VoyageViewportComponent implements OnInit, AfterContentInit, OnDest
   }
 
   public ngAfterContentInit() {
-    this.destinationChanges = this.destinations.changes
+    this.destinations.changes
+      .pipe(takeUntil(this.destroy$))
       .subscribe(destinations => this.definePaths());
+
+     this.voyagePathService.currentPoint$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(currentPoint => {
+        const { x, y } = currentPoint;
+        this.voyageNavigationService.centerTo(x, y);
+      });
   }
 
   public ngOnDestroy() {
-    this.destinationChanges.unsubscribe();
+    this.destroy.next();
   }
 
   public definePaths() {

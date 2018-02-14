@@ -1,18 +1,21 @@
 import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs/Subject';
+import { Observable } from 'rxjs/Observable';
 
 import { VoyageNavigationService } from './voyage-navigation.service';
-import { VoyageDestinationDirective } from '../directives/voyage-destination.directive';
-import { VoyageActivePathDirective } from '../directives/voyage-active-path.directive';
+import { VoyageDestinationDirective } from './../directives/voyage-destination.directive';
+import { VoyageActivePathDirective } from './../directives/voyage-active-path.directive';
 
 @Injectable()
 export class VoyagePathService {
-  totalLength: number;
-  strokeLength = 0;
-  animationHandle: number;
+  private currentPoint = new Subject<SVGPoint>();
+  public currentPoint$ = this.currentPoint.asObservable();
 
-  constructor(
-    private voyageNavigationService: VoyageNavigationService
-  ) {}
+  private totalLength: number;
+  private strokeLength = 0;
+  private animationHandle: number;
+
+  constructor() {}
 
   public animateLength(activePath: VoyageActivePathDirective, destinations: VoyageDestinationDirective[]) {
     this.totalLength = activePath.el.getTotalLength();
@@ -34,8 +37,9 @@ export class VoyagePathService {
     }
 
     activePath.setStrokeDasharray(`${this.strokeLength} ${this.totalLength}`);
+
     const center = activePath.el.getPointAtLength(this.strokeLength);
-    this.voyageNavigationService.centerTo(center.x, center.y);
+    this.currentPoint.next(center);
 
     this.toggleReachedDestinations(destinations);
 

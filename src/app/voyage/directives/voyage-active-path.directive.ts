@@ -1,6 +1,7 @@
 import { Directive, ElementRef, Renderer2 } from '@angular/core';
+
 import { VoyageDestinationDirective } from './voyage-destination.directive';
-import { linearInterpolation } from '../../shared/utils';
+import { linearInterpolation } from './../../shared/utils';
 
 @Directive({
   selector: '[voyageActivePath]'
