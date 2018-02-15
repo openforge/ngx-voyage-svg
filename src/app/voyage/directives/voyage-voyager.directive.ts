@@ -15,10 +15,10 @@ export class VoyageVoyagerDirective implements OnInit {
   ) {}
 
   public ngOnInit() {
-    const { left, top } = this.el.getBoundingClientRect();
+    const { e: x, f: y } = this.el.getCTM();
 
-    this.initialX = left;
-    this.initialY = top;
+    this.initialX = x;
+    this.initialY = y;
   }
 
   public setPosition(x, y) {
