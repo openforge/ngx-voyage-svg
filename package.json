@@ -1,6 +1,13 @@
 {
-  "name": "voyage-svg",
-  "version": "0.0.0",
+  "name": "@webjunto/voyage-svg",
+  "version": "0.0.1",
+  "description": "Angular library to create custom map-based Voyages with SVGs",
+  "keywords": [
+    "angular",
+    "svg",
+    "map",
+    "voyage"
+  ],
   "license": "MIT",
   "scripts": {
     "ng": "ng",
@@ -11,7 +18,10 @@
     "e2e": "ng e2e",
     "packagr": "ng-packagr -p ng-package.json"
   },
-  "private": true,
+  "repository": "github:Webjunto/voyage-svg",
+  "bugs": {
+    "url": "https://github.com/Webjunto/voyage-svg/issues"
+  },
   "dependencies": {
     "@angular/animations": "^5.2.0",
     "@angular/common": "^5.2.0",
