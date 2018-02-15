@@ -92,7 +92,7 @@ export class VoyageViewportComponent implements OnChanges, OnInit, AfterContentI
 
     if (boundsChange && !boundsChange.firstChange && boundsChange.currentValue) {
       this.voyageNavigationService.setMaxBounds(boundsChange.currentValue);
-  }
+    }
   }
 
   public ngOnInit() {
@@ -133,6 +133,11 @@ export class VoyageViewportComponent implements OnChanges, OnInit, AfterContentI
     this.travelPath.setPathDefinition(destinations);
     this.activePath.setPathDefinition(destinations, this.currentProgress);
     this.voyagePathService.animateLength(this.activePath, destinations);
+  }
+
+  @HostListener('window:resize')
+  private onResize() {
+    this.voyageNavigationService.moveBy(0, 0);
   }
 
   @HostListener('panstart', ['$event'])
