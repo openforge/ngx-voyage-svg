@@ -44,10 +44,18 @@ export class VoyageTransformationMatrix {
     return this.matrix[5];
   }
 
+  private maxX: number;
+  private maxY: number;
+
   constructor(
     private clientRect: ClientRect,
     private matrix = [1, 0, 0, 1, 0, 0]
   ) {}
+
+  public setMaxBounds(x: number, y: number) {
+    this.maxX = x;
+    this.maxY = y;
+  }
 
   public inverse() {
     const determinent = 1 / (this.a * this.d - this.b * this.c);
@@ -108,13 +116,13 @@ export class VoyageTransformationMatrix {
     // Set max bounds
     this.e = clamp(
       this.e,
-      -(this.a * this.clientRect.width - window.innerWidth),
+      -(this.a * this.clientRect.width - (this.maxX || window.innerWidth)),
       0
     ); // TODO: Global config
 
     this.f = clamp(
       this.f,
-      -(this.d * this.clientRect.height - window.innerHeight),
+      -(this.d * this.clientRect.height - (this.maxY || window.innerHeight)),
       0
     ); // TODO: Global config
 

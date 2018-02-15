@@ -26,6 +26,10 @@ export class VoyageNavigationService {
     this.updateSVG();
   }
 
+  setMaxBounds(maxBounds: {x: number; y: number}) {
+    this.transformationMatrix.setMaxBounds(maxBounds.x, maxBounds.y);
+  }
+
   moveBy(x: number, y: number) {
     const invertedCTM = this.transformationMatrix.inverse();
 

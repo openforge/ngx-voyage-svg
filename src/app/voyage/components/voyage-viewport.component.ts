@@ -64,6 +64,7 @@ export class VoyageViewportComponent implements OnChanges, OnInit, AfterContentI
   private voyager: VoyageVoyagerDirective;
 
   @Input() private currentProgress: number;
+  @Input() private maxBounds: {x: number; y: number};
 
   private destroy = new Subject<never>();
   private destroy$ = this.destroy.asObservable();
@@ -80,17 +81,29 @@ export class VoyageViewportComponent implements OnChanges, OnInit, AfterContentI
   ) {}
 
   public ngOnChanges(changes: SimpleChanges) {
-    const { currentProgress: progressChange } = changes;
+    const {
+      currentProgress: progressChange,
+      bounds: boundsChange,
+    } = changes;
 
     if (progressChange && !progressChange.firstChange) {
       this.definePaths();
     }
+
+    if (boundsChange && !boundsChange.firstChange && boundsChange.currentValue) {
+      this.voyageNavigationService.setMaxBounds(boundsChange.currentValue);
+  }
   }
 
   public ngOnInit() {
     this.backgroundDirective.clientRect$.pipe(take(1)).subscribe(clientRect => {
       this.voyageNavigationService.init(this.wrapperDirective.el, clientRect);
+
       this.definePaths();
+
+      if (this.maxBounds) {
+        this.voyageNavigationService.setMaxBounds(this.maxBounds);
+      }
     });
   }
 
