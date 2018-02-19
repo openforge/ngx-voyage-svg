@@ -41,7 +41,12 @@ export interface HammerInput {
       </ng-content>
     </div>
   `,
-  styles: [`div:first-of-type { height: 100%; width: 100% }`],
+  styles: [
+    `div:first-of-type {
+      height: 100%; width: 100%;
+      touch-action: none;
+    }`
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class VoyageViewportComponent implements OnChanges, OnInit, AfterContentInit, OnDestroy {
