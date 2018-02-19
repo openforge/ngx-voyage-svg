@@ -7,7 +7,7 @@ import {
   ChangeDetectorRef
 } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
-import { filter } from 'rxjs/operators';
+import { takeWhile, filter } from 'rxjs/operators';
 
 import { VoyagePathService } from './../services/voyage-path.service';
 
@@ -36,10 +36,12 @@ export class VoyageDestinationDirective implements OnInit, OnDestroy {
 
   public ngOnInit() {
     this.positionSubscription = this.voyagePathService.currentPosition$
-      .pipe(filter(() => !this.isReached))
-      .subscribe(currentPosition => {
-        this.isReached =
-          currentPosition.lengthAtPoint >= this.pathLengthAtPoint;
+      .pipe(
+        takeWhile(() => !this.isReached),
+        filter(currentPosition => currentPosition.lengthAtPoint >= this.pathLengthAtPoint),
+      )
+      .subscribe(() => {
+        this.isReached = true;
         this.cdRef.detectChanges();
       });
   }
