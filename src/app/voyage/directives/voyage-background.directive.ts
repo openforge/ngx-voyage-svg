@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { VoyageViewportComponent } from './../components/voyage-viewport.component';
 
 @Directive({
-  selector: '[voyageBackground]'
+  selector: '[voyageBackground]',
 })
 export class VoyageBackgroundDirective implements AfterViewInit {
   public get clientRect$(): Observable<ClientRect> {
@@ -18,10 +18,7 @@ export class VoyageBackgroundDirective implements AfterViewInit {
 
   private clientRect: Subject<ClientRect> = new Subject();
 
-  constructor(
-    private elRef: ElementRef,
-    private renderer: Renderer2
-  ) {}
+  constructor(private elRef: ElementRef, private renderer: Renderer2) {}
 
   public ngAfterViewInit() {
     // Hack: because Safari doesn't fire load event

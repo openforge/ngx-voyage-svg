@@ -2,17 +2,14 @@ import { Directive, ElementRef, Renderer2 } from '@angular/core';
 import { VoyageDestinationDirective } from './voyage-destination.directive';
 
 @Directive({
-  selector: '[voyageTravelPath]'
+  selector: '[voyageTravelPath]',
 })
 export class VoyageTravelPathDirective {
   public get el(): SVGPathElement {
     return this.elRef.nativeElement;
   }
 
-  constructor(
-    private elRef: ElementRef,
-    private renderer: Renderer2
-  ) {}
+  constructor(private elRef: ElementRef, private renderer: Renderer2) {}
 
   public setPathDefinition(destinations: VoyageDestinationDirective[]) {
     const definition = destinations.reduce((pathDef, destination, destinationIdx) => {

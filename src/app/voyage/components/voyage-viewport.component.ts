@@ -41,30 +41,30 @@ export interface HammerInput {
       </ng-content>
     </div>
   `,
-  styles: [`div:first-of-type { height: 100%; width: 100% }`],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styles: [
+    `div:first-of-type {
+      height: 100%; width: 100%;
+      touch-action: none;
+    }`,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VoyageViewportComponent implements OnChanges, OnInit, AfterContentInit, OnDestroy {
-  @ContentChild(VoyageWrapperDirective)
-  private wrapperDirective: VoyageWrapperDirective;
+  @ContentChild(VoyageWrapperDirective) private wrapperDirective: VoyageWrapperDirective;
 
-  @ContentChild(VoyageBackgroundDirective)
-  private backgroundDirective: VoyageBackgroundDirective;
+  @ContentChild(VoyageBackgroundDirective) private backgroundDirective: VoyageBackgroundDirective;
 
   @ContentChildren(VoyageDestinationDirective, { descendants: true })
   private destinations: QueryList<VoyageDestinationDirective>;
 
-  @ContentChild(VoyageTravelPathDirective)
-  private travelPath: VoyageTravelPathDirective;
+  @ContentChild(VoyageTravelPathDirective) private travelPath: VoyageTravelPathDirective;
 
-  @ContentChild(VoyageActivePathDirective)
-  private activePath: VoyageActivePathDirective;
+  @ContentChild(VoyageActivePathDirective) private activePath: VoyageActivePathDirective;
 
-  @ContentChild(VoyageVoyagerDirective)
-  private voyager: VoyageVoyagerDirective;
+  @ContentChild(VoyageVoyagerDirective) private voyager: VoyageVoyagerDirective;
 
   @Input() private currentProgress: number;
-  @Input() private maxBounds: {x: number; y: number};
+  @Input() private maxBounds: { x: number; y: number };
 
   private destroy = new Subject<never>();
   private destroy$ = this.destroy.asObservable();
@@ -81,10 +81,7 @@ export class VoyageViewportComponent implements OnChanges, OnInit, AfterContentI
   ) {}
 
   public ngOnChanges(changes: SimpleChanges) {
-    const {
-      currentProgress: progressChange,
-      bounds: boundsChange,
-    } = changes;
+    const { currentProgress: progressChange, bounds: boundsChange } = changes;
 
     if (progressChange && !progressChange.firstChange) {
       this.definePaths();
@@ -108,18 +105,7 @@ export class VoyageViewportComponent implements OnChanges, OnInit, AfterContentI
   }
 
   public ngAfterContentInit() {
-    this.destinations.changes
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(destinations => this.definePaths());
-
-    this.voyagePathService.currentPosition$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(currentPosition => {
-        const { x, y } = currentPosition.point;
-
-        this.voyageNavigationService.centerTo(x, y);
-        this.voyager.setPosition(x, y);
-      });
+    this.destinations.changes.pipe(takeUntil(this.destroy$)).subscribe(destinations => this.definePaths());
   }
 
   public ngOnDestroy() {
@@ -137,7 +123,7 @@ export class VoyageViewportComponent implements OnChanges, OnInit, AfterContentI
 
   @HostListener('window:resize')
   private onResize() {
-    this.voyageNavigationService.moveBy(0, 0);
+    this.voyageNavigationService.updateSVG();
   }
 
   @HostListener('panstart', ['$event'])

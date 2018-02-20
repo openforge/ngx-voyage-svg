@@ -1,4 +1,3 @@
-
 import { clamp } from './utils';
 
 export class VoyageTransformationMatrix {
@@ -47,10 +46,7 @@ export class VoyageTransformationMatrix {
   private maxX: number;
   private maxY: number;
 
-  constructor(
-    private clientRect: ClientRect,
-    private matrix = [1, 0, 0, 1, 0, 0]
-  ) {}
+  constructor(private clientRect: ClientRect, private matrix = [1, 0, 0, 1, 0, 0]) {}
 
   public setMaxBounds(x: number, y: number) {
     this.maxX = x;
@@ -66,7 +62,7 @@ export class VoyageTransformationMatrix {
       determinent * -this.c,
       determinent * this.a,
       determinent * (this.c * this.f - this.d * this.e),
-      determinent * (this.b * this.d - this.a * this.f)
+      determinent * (this.b * this.d - this.a * this.f),
     ];
 
     return new VoyageTransformationMatrix(this.clientRect, invertedMatrix);
@@ -98,7 +94,7 @@ export class VoyageTransformationMatrix {
   public transformPoint(x: number, y: number): { x: number; y: number } {
     return {
       x: x * this.a + y * this.c + this.e,
-      y: x * this.b + y * this.d + this.f
+      y: x * this.b + y * this.d + this.f,
     };
   }
 
@@ -114,17 +110,9 @@ export class VoyageTransformationMatrix {
 
   public getCTM() {
     // Set max bounds
-    this.e = clamp(
-      this.e,
-      -(this.a * this.clientRect.width - (this.maxX || window.innerWidth)),
-      0
-    ); // TODO: Global config
+    this.e = clamp(this.e, -(this.a * this.clientRect.width - (this.maxX || window.innerWidth)), 0); // TODO: Global config
 
-    this.f = clamp(
-      this.f,
-      -(this.d * this.clientRect.height - (this.maxY || window.innerHeight)),
-      0
-    ); // TODO: Global config
+    this.f = clamp(this.f, -(this.d * this.clientRect.height - (this.maxY || window.innerHeight)), 0); // TODO: Global config
 
     return this.matrix.join(', ');
   }

@@ -9,6 +9,6 @@ import { VoyageModule } from './voyage/voyage.module';
   declarations: [AppComponent],
   imports: [BrowserModule, HttpClientModule, VoyageModule],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule {}

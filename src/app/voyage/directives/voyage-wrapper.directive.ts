@@ -1,7 +1,7 @@
 import { Directive, ElementRef } from '@angular/core';
 
 @Directive({
-  selector: '[voyageWrapper]'
+  selector: '[voyageWrapper]',
 })
 export class VoyageWrapperDirective {
   public get el(): SVGElement {
