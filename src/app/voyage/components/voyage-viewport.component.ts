@@ -116,15 +116,6 @@ export class VoyageViewportComponent implements OnChanges, OnInit, AfterContentI
     this.destinations.changes
       .pipe(takeUntil(this.destroy$))
       .subscribe(destinations => this.definePaths());
-
-    this.voyagePathService.currentPosition$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(currentPosition => {
-        const { x, y } = currentPosition.point;
-
-        this.voyageNavigationService.centerTo(x, y);
-        this.voyager.setPosition(x, y);
-      });
   }
 
   public ngOnDestroy() {
@@ -142,7 +133,7 @@ export class VoyageViewportComponent implements OnChanges, OnInit, AfterContentI
 
   @HostListener('window:resize')
   private onResize() {
-    this.voyageNavigationService.moveBy(0, 0);
+    this.voyageNavigationService.updateSVG();
   }
 
   @HostListener('panstart', ['$event'])

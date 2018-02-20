@@ -63,8 +63,12 @@ export class VoyageNavigationService {
     this.updateSVG();
   }
 
-  private updateSVG() {
-    requestAnimationFrame(() => {
+  updateSVG(animationFn?: VoidFunction) {
+    return requestAnimationFrame(() => {
+      if (animationFn) {
+        animationFn();
+      }
+
       this.renderer.setAttribute(
         this.SVGElement,
         'transform',

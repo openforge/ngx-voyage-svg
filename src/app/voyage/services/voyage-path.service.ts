@@ -15,20 +15,27 @@ export class VoyagePathService {
   private totalLength: number;
   private animationHandle: number;
 
-  constructor() {}
+  constructor(
+    private voyageNavigationService: VoyageNavigationService
+  ) {}
 
   public animateLength(activePath: VoyageActivePathDirective, destinations: VoyageDestinationDirective[]) {
     this.totalLength = activePath.el.getTotalLength();
 
     this.stopAnimation();
-    this.animationHandle = requestAnimationFrame(() => this.animate(activePath, destinations));
+    this.startAnimation(activePath, destinations);
   }
 
   public stopAnimation() {
     cancelAnimationFrame(this.animationHandle);
   }
 
-  private animate(activePath: VoyageActivePathDirective, destinations: VoyageDestinationDirective[]) {
+  public startAnimation(activePath, destinations) {
+    const animationFn = () => this.animatePath(activePath, destinations);
+    this.animationHandle = this.voyageNavigationService.updateSVG(animationFn);
+  }
+
+  private animatePath(activePath: VoyageActivePathDirective, destinations: VoyageDestinationDirective[]) {
     this.strokeLength += 4;
 
     if (this.strokeLength > this.totalLength) {
@@ -37,13 +44,14 @@ export class VoyagePathService {
 
     activePath.setStrokeDasharray(`${this.strokeLength} ${this.totalLength}`);
 
-    const center = activePath.el.getPointAtLength(this.strokeLength);
-    this.currentPosition.next({ point: center, lengthAtPoint: this.strokeLength });
+    const point = activePath.el.getPointAtLength(this.strokeLength);
+    this.voyageNavigationService.centerTo(point.x, point.y);
+    this.currentPosition.next({ point, lengthAtPoint: this.strokeLength });
 
     if (this.strokeLength === this.totalLength) {
       return;
     }
 
-    this.animationHandle = requestAnimationFrame(() => this.animate(activePath, destinations));
+    this.startAnimation(activePath, destinations);
   }
 }
