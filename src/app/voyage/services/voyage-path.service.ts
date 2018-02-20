@@ -8,16 +8,14 @@ import { VoyageActivePathDirective } from './../directives/voyage-active-path.di
 
 @Injectable()
 export class VoyagePathService {
-  private currentPosition = new Subject<{point: SVGPoint, lengthAtPoint: number}>();
+  private currentPosition = new Subject<{ point: SVGPoint; lengthAtPoint: number }>();
   public currentPosition$ = this.currentPosition.asObservable();
   public strokeLength = 0;
 
   private totalLength: number;
   private animationHandle: number;
 
-  constructor(
-    private voyageNavigationService: VoyageNavigationService
-  ) {}
+  constructor(private voyageNavigationService: VoyageNavigationService) {}
 
   public animateLength(activePath: VoyageActivePathDirective, destinations: VoyageDestinationDirective[]) {
     this.totalLength = activePath.el.getTotalLength();

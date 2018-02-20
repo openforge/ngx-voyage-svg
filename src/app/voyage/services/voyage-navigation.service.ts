@@ -26,7 +26,7 @@ export class VoyageNavigationService {
     this.updateSVG();
   }
 
-  setMaxBounds(maxBounds: {x: number; y: number}) {
+  setMaxBounds(maxBounds: { x: number; y: number }) {
     this.transformationMatrix.setMaxBounds(maxBounds.x, maxBounds.y);
   }
 
@@ -36,18 +36,13 @@ export class VoyageNavigationService {
     const basePx = invertedCTM.transformPoint(x, y);
     const baseVPTopLeftPx = invertedCTM.transformPoint(0, 0);
 
-    this.transformationMatrix.translate(
-      basePx.x - baseVPTopLeftPx.x,
-      basePx.y - baseVPTopLeftPx.y
-    );
+    this.transformationMatrix.translate(basePx.x - baseVPTopLeftPx.x, basePx.y - baseVPTopLeftPx.y);
 
     this.updateSVG();
   }
 
   scaleBy(center, factor) {
-    const basePx = this.transformationMatrix
-      .inverse()
-      .transformPoint(center.x, center.y);
+    const basePx = this.transformationMatrix.inverse().transformPoint(center.x, center.y);
 
     this.transformationMatrix
       .translate(basePx.x, basePx.y)
@@ -69,11 +64,7 @@ export class VoyageNavigationService {
         animationFn();
       }
 
-      this.renderer.setAttribute(
-        this.SVGElement,
-        'transform',
-        `matrix(${this.transformationMatrix.getCTM()})`
-      );
+      this.renderer.setAttribute(this.SVGElement, 'transform', `matrix(${this.transformationMatrix.getCTM()})`);
     });
   }
 }

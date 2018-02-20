@@ -13,11 +13,7 @@ export class VoyageVoyagerDirective implements OnInit {
   private initialX = 0;
   private initialY = 0;
 
-  constructor(
-    private elRef: ElementRef,
-    private renderer: Renderer2,
-    private voyagePathService: VoyagePathService
-  ) {}
+  constructor(private elRef: ElementRef, private renderer: Renderer2, private voyagePathService: VoyagePathService) {}
 
   public ngOnInit() {
     const { e: x, f: y } = this.el.getCTM();
@@ -25,11 +21,10 @@ export class VoyageVoyagerDirective implements OnInit {
     this.initialX = x;
     this.initialY = y;
 
-    this.positionSubscription = this.voyagePathService.currentPosition$
-      .subscribe(currentPosition => {
-        const { x, y } = currentPosition.point;
-        this.setPosition(x, y);
-      });
+    this.positionSubscription = this.voyagePathService.currentPosition$.subscribe(currentPosition => {
+      const { x, y } = currentPosition.point;
+      this.setPosition(x, y);
+    });
   }
 
   public ngOnDestroy() {

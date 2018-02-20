@@ -67,7 +67,7 @@ import { linearInterpolation } from './shared/utils';
       </voyage-viewport>
     </ng-container>
   `,
-  styles: []
+  styles: [],
 })
 export class AppComponent implements OnInit {
   image = '/assets/usa-map.jpg';
@@ -150,9 +150,7 @@ function demoDataMapping(data) {
     let increment = 0;
 
     if (next) {
-      increment =
-        (next.pointsRequired - stop.pointsRequired) /
-        (stop.subStops.length + 1);
+      increment = (next.pointsRequired - stop.pointsRequired) / (stop.subStops.length + 1);
     }
 
     return {
@@ -177,7 +175,7 @@ function demoDataMapping(data) {
           y: pt.y,
           pointsRequired,
         };
-      })
+      }),
     };
   });
 

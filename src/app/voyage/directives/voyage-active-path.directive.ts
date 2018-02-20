@@ -4,17 +4,14 @@ import { VoyageDestinationDirective } from './voyage-destination.directive';
 import { linearInterpolation } from './../../shared/utils';
 
 @Directive({
-  selector: '[voyageActivePath]'
+  selector: '[voyageActivePath]',
 })
 export class VoyageActivePathDirective {
   public get el(): SVGPathElement {
     return this.elRef.nativeElement;
   }
 
-  constructor(
-    private elRef: ElementRef,
-    private renderer: Renderer2
-  ) {}
+  constructor(private elRef: ElementRef, private renderer: Renderer2) {}
 
   public setPathDefinition(destinations: VoyageDestinationDirective[], currentProgress: number) {
     const reachedDestinations = destinations.filter(dest => dest.requiredProgress <= currentProgress);
@@ -48,7 +45,8 @@ export class VoyageActivePathDirective {
     const next = destinations[nextIdx];
     const lastReached = destinations[lastReachedIdx];
 
-    const progressPct = (currentProgress - lastReached.requiredProgress) / (next.requiredProgress - lastReached.requiredProgress);
+    const progressPct =
+      (currentProgress - lastReached.requiredProgress) / (next.requiredProgress - lastReached.requiredProgress);
     const progressPoint = linearInterpolation(lastReached.point, next.point, progressPct);
 
     return `L ${progressPoint.x} ${progressPoint.y} `;

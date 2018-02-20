@@ -1,11 +1,4 @@
-import {
-  Directive,
-  OnInit,
-  OnDestroy,
-  Input,
-  ElementRef,
-  ChangeDetectorRef
-} from '@angular/core';
+import { Directive, OnInit, OnDestroy, Input, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import { takeWhile, filter } from 'rxjs/operators';
 
@@ -38,7 +31,7 @@ export class VoyageDestinationDirective implements OnInit, OnDestroy {
     this.positionSubscription = this.voyagePathService.currentPosition$
       .pipe(
         takeWhile(() => !this.isReached),
-        filter(currentPosition => currentPosition.lengthAtPoint >= this.pathLengthAtPoint),
+        filter(currentPosition => currentPosition.lengthAtPoint >= this.pathLengthAtPoint)
       )
       .subscribe(() => {
         this.isReached = true;

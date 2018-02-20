@@ -33,6 +33,6 @@ import 'hammerjs';
     VoyageActivePathDirective,
     VoyageVoyagerDirective,
   ],
-  providers: [VoyageNavigationService, VoyagePathService]
+  providers: [VoyageNavigationService, VoyagePathService],
 })
 export class VoyageModule {}
