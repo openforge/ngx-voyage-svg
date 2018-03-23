@@ -57,7 +57,7 @@ export class VoyageNavigationService {
 
     this.updateSVG();
   }
-  s;
+
   updateSVG(animationFn?: VoidFunction) {
     return requestAnimationFrame(() => {
       if (animationFn) {
